@@ -8,6 +8,7 @@ import {
   FlatList, Center,
 } from 'native-base';
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { SignOut } from 'phosphor-react-native';
 import { ChatTeardropText } from 'phosphor-react-native';
 
@@ -30,6 +31,16 @@ export function Home() {
   ]);
 
   const { colors } = useTheme();
+
+  const naviation = useNavigation();
+
+  function handleNewOder() {
+    naviation.navigate('new');
+  }
+
+  function handleOpenDetails(orderId: string) {
+    naviation.navigate('details', { orderId });
+  }
 
   return (
       <VStack flex={ 1 }
@@ -61,7 +72,7 @@ export function Home() {
             </Heading>
 
             <Text color="gray.200">
-              3
+              {orders.length}
             </Text>
           </HStack>
 
@@ -80,22 +91,26 @@ export function Home() {
           <FlatList data={ orders }
                     keyExtractor={ item => item.id }
                     renderItem={ ({ item }) =>
-                        <Order data={ item }/> }
+                        <Order data={ item } onPress={() => handleOpenDetails(item.id)}/> }
                     showsVerticalScrollIndicator={ false }
                     contentContainerStyle={ { paddingBottom: 100 } }
                     listEmptyComponent={ () => (
                         <Center>
                           <ChatTeardropText color={ colors.gray[300] }
                                             size={ 40 }/>
-                          <Text color="gray.300" fontSize="xl" mt={6} textAlign="center">
-                            Você ainda não tem {'\n'}
-                            soliciações {statusSelected === 'open' ? 'em aberto' : 'finalizados'}
+                          <Text color="gray.300"
+                                fontSize="xl"
+                                mt={ 6 }
+                                textAlign="center">
+                            Você ainda não tem { '\n' }
+                            soliciações { statusSelected === 'open' ? 'em aberto' : 'finalizados' }
                           </Text>
                         </Center>
                     ) }
           />
 
-          <Button title="Nova solicitação"/>
+          <Button title="Nova solicitação"
+                  onPress={ handleNewOder }/>
         </VStack>
       </VStack>
   );
